@@ -1,0 +1,134 @@
+Create the project
+
+create-react-app [name]
+cd [name]
+open project in editor
+
+src
+- React files
+package.json
+- dependencies
+
+npm run start 
+- Check everyting works localhost:3000
+
+Add dependencies
+
+npm install
+
+truffle init inside [name] directory
+
+- contracts
+- migrations
+- tuffle-config
+- tests
+
+ES6 features
+
+Set up project to support this. 
+babel JS compiler helps to manage different versions. 
+
+Remember the imports from package.json. 
+
+create file .babelrc in root directory
+{
+	"presets": ["es2015", "stage-2", "stage-3"]
+}
+
+
+create .env file to manage environment variables
+- different environments etc. 
+
+edit truffle-config.js
+
+	require("dotenv").config();
+	require("babel-register");
+	require("babel-polyfill");
+
+	This sets up Truffle to be able to use ES6 features
+	and injects environment variables into truffle project 
+
+	Change contracts_directory and contracts_build_directory
+	contracts_directory: "./src/contracts",
+  contracts_build_directory: "./src/abis",
+
+move contracts directory to /src
+
+	Web3js wants to read smart contract abis as they dynamically change and the have to exist in the src folder. 
+
+.gitignore 
+	add .env
+
+Smoke test
+
+	Create a basic attribute to check everything works. 
+
+	contracts 
+		create new file Token.sol 
+			-version of solidity 
+			- contract Token {
+				string public name = "My Name";
+				// Contract code
+			}
+
+Deploy contract
+	- Start Ganache local development chain at (localhost:7545)
+	- 10 accounts with ether balances
+
+	- edit truffle-config to connect to Ganache dev chain
+		networks: {
+			development: {
+				host: "127.0.0.1", // localhost
+				port: 7545,
+				network_id: "*" // Match any network id 
+			}
+		}
+
+	- specify solc compiler: 
+		compilers: {
+			solc: {
+				optimizer: {
+					enabled: true,
+					runs: 200
+				}
+			}
+		}
+
+Terminal 
+	truffle compile
+
+contracts_build_directory abis
+	- compiled contracts json RPC
+	- these will change when changing contract
+
+Migrate contract 
+Migration means that you're changing the blockchain state. 
+Whenever you create a smart contract on the blockchain this happens. 
+
+	migrations folder	
+		- create new file must start with 2_
+
+		truffle migrate
+			migrate command will automatically run compile before migrating. 
+
+Check your Ganache to see depoloyed contracts and updated balances.
+By default, truffle always uses the first account in Ganache. 
+
+truffle console 
+	opens an node js console to interact with your deployed contract. 
+
+	anytime we fetch data from the blockchain it's gonna be async. This means
+	we have to use the await keyword. 
+	
+	await Token.depoloyed() returns a promise with the result. 
+
+TDD 
+
+Create test file in testdirectory. Extension .js contain /test/
+	require("chai").use(require("chai-as-promised")).should()
+
+Run test 
+	- Ganache must be up
+	- Everytime we run Token.new() a new contract is deployed. 
+	- truffle test 
+

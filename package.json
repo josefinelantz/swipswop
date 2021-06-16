@@ -3,12 +3,33 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@testing-library/jest-dom": "^5.11.4",
-    "@testing-library/react": "^11.1.0",
-    "@testing-library/user-event": "^12.1.10",
+    "@openzeppelin/contracts": "^4.1.0",
+    "@truffle/hdwallet-provider": "^1.4.0",
+    "apexcharts": "^3.27.1",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "babel-preset-stage-3": "^6.24.1",
+    "babel-register": "^6.26.0",
+    "bootstrap": "^5.0.1",
+    "chai": "^4.3.4",
+    "chai-as-promised": "^7.1.1",
+    "chai-bignumber": "^3.0.0",
+    "dotenv": "^8.2.0",
+    "lodash": "^4.17.21",
+    "mkdirp": "^0.5.5",
+    "moment": "^2.29.1",
     "react": "^17.0.2",
+    "react-apexcharts": "^1.3.9",
     "react-dom": "^17.0.2",
+    "react-redux": "^7.2.4",
     "react-scripts": "4.0.3",
+    "redux": "^4.1.0",
+    "redux-logger": "^3.0.6",
+    "reselect": "^4.0.0",
+    "solidity-coverage": "^0.7.16",
+    "truffle": "^5.3.10",
     "web-vitals": "^1.0.1"
   },
   "scripts": {
@@ -19,8 +40,7 @@
   },
   "eslintConfig": {
     "extends": [
-      "react-app",
-      "react-app/jest"
+      "react-app"
     ]
   },
   "browserslist": {
