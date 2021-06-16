@@ -132,3 +132,11 @@ Run test
 	- Everytime we run Token.new() a new contract is deployed. 
 	- truffle test 
 
+Constructor in a contract is run every time a contract is deployed. 
+constructor() {
+
+}
+
+Tokens are stored as pennies of the token. 
+1 million tokens multiplied by (10 to the power of decimals)
+1000000 * (10**18);

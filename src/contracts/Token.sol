@@ -3,19 +3,19 @@ pragma solidity >=0.4.22 <0.9.0;
 
 contract Token {
     // State variables
-    string public name = "My Token";
-    // string public symbol;
-    // uint8 public decimals;
-    // uint256 public totalSupply;
+    string public name = "DApp Token";
+    string public symbol = "DAPP";
+    uint8 public decimals = 18;
+    uint256 public totalSupply;
 
     // mapping(address => uint256) private _balances;
 
-    // constructor(string memory _name, string memory _symbol) {
-    //     name = _name;
-    //     symbol = _symbol;
-    //     decimals = 18;
-    //     totalSupply = 100000000 * (10**18);
-    // }
+    constructor() public {
+        // name = _name;
+        // symbol = _symbol;
+        // decimals = 18;
+        totalSupply = 1000000 * (10**18);
+    }
 
     // Transfers _value amount of tokens to address _to, and MUST fire the Transfer event. The function SHOULD throw if the message caller’s account balance does not have enough tokens to spend.
 
