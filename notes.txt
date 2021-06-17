@@ -143,3 +143,19 @@ Tokens are stored as pennies of the token.
 
 Solidity global variables
 
+Exchange contract
+
+ - Deposit & withdraw funds
+ - manage orders - make or cancel
+ - handle trades - charge features
+
+ todo
+ - set the fee account
+ - deposit ether
+ - withdraw ether
+ - deposit tokens
+ - withdraw tokens
+ - check balances
+ - make order
+ - cancel order
+ - fill order 
