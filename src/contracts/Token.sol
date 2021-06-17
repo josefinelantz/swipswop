@@ -1,29 +1,49 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.4.22 <0.9.0;
 
+import "../../node_modules/@openzeppelin/contracts/utils/math/SafeMath.sol";
+
 contract Token {
-    // State variables
+    using SafeMath for uint256;
+    // State variables belong to the smart contract and represents the status. Like a db table
     string public name = "DApp Token";
     string public symbol = "DAPP";
     uint8 public decimals = 18;
     uint256 public totalSupply;
 
-    // mapping(address => uint256) private _balances;
+    // Store information on account balances on the blockchain
+    // We want this to be immutable
+    mapping(address => uint256) public balanceOf;
 
-    constructor() public {
+    //mapping(address => uint256) private _balances;
+
+    // Events (indexed enables filtering of events to subscribe to)
+    event Transfer(address indexed from, address indexed to, uint256 value);
+
+    constructor() {
         // name = _name;
         // symbol = _symbol;
         // decimals = 18;
         totalSupply = 1000000 * (10**18);
+        balanceOf[msg.sender] = totalSupply;
     }
 
-    // Transfers _value amount of tokens to address _to, and MUST fire the Transfer event. The function SHOULD throw if the message caller’s account balance does not have enough tokens to spend.
+    // Transfer _value amount of tokens to address _to
+    // MUST fire the Transfer event.
+    // SHOULD throw if the message caller’s account balance does not have enough tokens to spend.
+    // Transfers of 0 values MUST be treated as normal transfers and fire the Transfer event.
+    function transfer(address _to, uint256 _value)
+        public
+        returns (bool success)
+    {
+        require(_to != address(0));
+        require(balanceOf[msg.sender] >= _value);
 
-    // Note Transfers of 0 values MUST be treated as normal transfers and fire the Transfer event.
-
-    //function transfer(address _to, uint256 _value) public returns (bool success)
-
-    // Transfers _value amount of tokens from address _from to address _to, and MUST fire the Transfer event.
+        balanceOf[msg.sender] = balanceOf[msg.sender].sub(_value);
+        balanceOf[_to] = balanceOf[_to].add(_value);
+        emit Transfer(msg.sender, _to, _value);
+        return true;
+    }
 
     // The transferFrom method is used for a withdraw workflow, allowing contracts to transfer tokens on your behalf. This can be used for example to allow a contract to transfer tokens on your behalf and/or to charge fees in sub-currencies. The function SHOULD throw unless the _from account has deliberately authorized the sender of the message via some mechanism.
 
