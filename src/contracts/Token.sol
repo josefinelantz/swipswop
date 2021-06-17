@@ -46,21 +46,38 @@ contract Token {
         public
         returns (bool success)
     {
-        require(_to != address(0));
         require(balanceOf[msg.sender] >= _value);
-
-        balanceOf[msg.sender] = balanceOf[msg.sender].sub(_value);
-        balanceOf[_to] = balanceOf[_to].add(_value);
-        emit Transfer(msg.sender, _to, _value);
+        _transfer(msg.sender, _to, _value);
         return true;
     }
 
+    function _transfer(
+        address _from,
+        address _to,
+        uint256 _value
+    ) internal {
+        require(_to != address(0));
+        balanceOf[_from] = balanceOf[_from].sub(_value);
+        balanceOf[_to] = balanceOf[_to].add(_value);
+        emit Transfer(_from, _to, _value);
+    }
+
     // The transferFrom method is used for a withdraw workflow, allowing contracts to transfer tokens on your behalf. This can be used for example to allow a contract to transfer tokens on your behalf and/or to charge fees in sub-currencies.
-    // The function SHOULD throw unless the _from account has deliberately authorized the sender of the message via some mechanism handled by the Approve function.
+    // SHOULD throw unless the _from account has deliberately authorized the sender of the message via some mechanism handled by the Approve function.
+    // Transfers of 0 values MUST be treated as normal transfers and fire the Transfer event.
 
-    // Note Transfers of 0 values MUST be treated as normal transfers and fire the Transfer event.
+    function transferFrom(
+        address _from,
+        address _to,
+        uint256 _value
+    ) public returns (bool success) {
+        require(_value <= balanceOf[_from]);
+        require(_value <= allowance[_from][msg.sender]);
 
-    //function transferFrom(address _from, address _to, uint256 _value) public returns (bool success)
+        allowance[_from][msg.sender] = allowance[_from][msg.sender].sub(_value);
+        _transfer(_from, _to, _value);
+        return true;
+    }
 
     // The Approve function Allows a _spender to withdraw from _spenders' account multiple times, up to the _value amount. If this function is called again it overwrites the current allowance with _value.
 
@@ -75,8 +92,6 @@ contract Token {
         emit Approval(msg.sender, _spender, _value);
         return true;
     }
-    // allowance
-    // Returns the amount which _spender is still allowed to withdraw from _owner.
 
-    // function allowance(address _owner, address _spender) public view returns (uint256 remaining)
+    //function allowance(address _owner, address _spender) public view returns (uint256 remaining)
 }
