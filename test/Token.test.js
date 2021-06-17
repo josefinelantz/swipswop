@@ -1,3 +1,4 @@
+import { should } from "chai";
 import { tokens, EVM_REVERT } from "./helpers";
 
 const Token = artifacts.require("Token");
@@ -6,7 +7,7 @@ require("chai")
 	.use(require("chai-as-promised"))
 	.should()
 
-contract("Token", ([deployer, receiver]) => {
+contract("Token", ([deployer, receiver, exchange]) => {
 	const name = "DApp Token"
 	const symbol = "DAPP"
 	const decimals = "18"
@@ -100,5 +101,38 @@ contract("Token", ([deployer, receiver]) => {
 			})
 		})
 	})
+
+	describe("approving tokens", async () => {
+		let result
+		let amount
+
+		beforeEach(async () => {
+			amount = tokens(100)
+			// For exchange what is the allowance approved by deployer?
+			result = await token.approve(exchange, amount, { from: deployer })
+		})
+
+		describe("success", () => {
+			it("allocates an allowance for delegated token spending on exchange", async () => {
+				const allowance = await token.allowance(deployer, exchange)
+				allowance.toString().should.equal(amount.toString())
+			})
+
+			it("emits an approval event", async () => {
+				const log = result.logs[0]
+				log.event.should.equal("Approval")
+				const event = log.args
+				event.owner.should.equal(deployer, "owner is correct")
+				event.spender.should.equal(exchange, "spender is correct")
+				event.value.toString().should.equal(amount.toString());
+			})
+		})
+
+		describe("failure", () => {
+			it("rejects invalid spenders", async () => {
+				await token.approve(0x0, amount, { from: deployer }).should.be.rejected
+		})
+	})
+})
 })
 

@@ -15,10 +15,20 @@ contract Token {
     // We want this to be immutable
     mapping(address => uint256) public balanceOf;
 
+    // How many tokens the exchange has permission to spend
+    // deployer address, exhange address, amount allowed to spend
+    // Deployer could have many different places where tokens are delegated
+    mapping(address => mapping(address => uint256)) public allowance;
+
     //mapping(address => uint256) private _balances;
 
     // Events (indexed enables filtering of events to subscribe to)
     event Transfer(address indexed from, address indexed to, uint256 value);
+    event Approval(
+        address indexed owner,
+        address indexed spender,
+        uint256 value
+    );
 
     constructor() {
         // name = _name;
@@ -45,7 +55,8 @@ contract Token {
         return true;
     }
 
-    // The transferFrom method is used for a withdraw workflow, allowing contracts to transfer tokens on your behalf. This can be used for example to allow a contract to transfer tokens on your behalf and/or to charge fees in sub-currencies. The function SHOULD throw unless the _from account has deliberately authorized the sender of the message via some mechanism.
+    // The transferFrom method is used for a withdraw workflow, allowing contracts to transfer tokens on your behalf. This can be used for example to allow a contract to transfer tokens on your behalf and/or to charge fees in sub-currencies.
+    // The function SHOULD throw unless the _from account has deliberately authorized the sender of the message via some mechanism handled by the Approve function.
 
     // Note Transfers of 0 values MUST be treated as normal transfers and fire the Transfer event.
 
@@ -55,9 +66,17 @@ contract Token {
 
     // NOTE: To prevent attack vectors like the one described here and discussed here, clients SHOULD make sure to create user interfaces in such a way that they set the allowance first to 0 before setting it to another value for the same spender. THOUGH The contract itself shouldn’t enforce it, to allow backwards compatibility with contracts deployed before
 
-    // 	function approve(address _spender, uint256 _value) public returns (bool success)
-    //  	allowance
-    // 		Returns the amount which _spender is still allowed to withdraw from _owner.
+    function approve(address _spender, uint256 _value)
+        public
+        returns (bool success)
+    {
+        require(_spender != address(0));
+        allowance[msg.sender][_spender] = _value;
+        emit Approval(msg.sender, _spender, _value);
+        return true;
+    }
+    // allowance
+    // Returns the amount which _spender is still allowed to withdraw from _owner.
 
     // function allowance(address _owner, address _spender) public view returns (uint256 remaining)
 }

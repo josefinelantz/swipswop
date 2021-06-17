@@ -142,3 +142,4 @@ Tokens are stored as pennies of the token.
 1000000 * (10**18);
 
 Solidity global variables
+
