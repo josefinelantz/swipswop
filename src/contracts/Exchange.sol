@@ -12,10 +12,15 @@ contract Exchange {
     address constant ETHER = address(0); // Allows for storing Ether in tokens mapping.
     // Token address, user who deposited address, user balance
     mapping(address => mapping(address => uint256)) public tokens;
-		// Storage for orders
+		
 		// Id generator cash
 		uint256 public orderCount;
+
+		// Storage for orders
 		mapping(uint256 => _Order) public orders;
+
+		// Storage for tracking cancelled orders
+		mapping(uint256 => bool) public orderCancelled;
 
     // Events
     event Deposit(
@@ -38,6 +43,16 @@ contract Exchange {
 			address tokenGive, 
 			uint amountGive, 
 			uint timestamp);
+
+		event Cancel(
+			uint id,
+			address user,
+			address tokenGet,
+			uint amountGet,
+			address tokenGive,
+			uint amountGive,
+			uint timestamp
+		);
 
 		// Model the order
 		struct _Order {
@@ -94,8 +109,31 @@ contract Exchange {
 
 		// Add the order to storage
 		function makeOrder(address _tokenGet, uint256 _amountGet, address _tokenGive, uint256 _amountGive) public {
+			uint _id = 1;
 			orderCount = orderCount.add(1);
-			orders[orderCount] = _Order(orderCount, msg.sender, _tokenGet, _amountGet, _tokenGive, _amountGive, block.timestamp);
+			_Order storage _order = orders[_id];
+			_order.id = orderCount;
+			_order.user = msg.sender;
+			_order.tokenGet = _tokenGet; 
+			_order.amountGet = _amountGet;
+			_order.tokenGive = _tokenGive;
+			_order.amountGive = _amountGive; 
+			_order.timestamp = block.timestamp;
 			emit Order(orderCount, msg.sender, _tokenGet, _amountGet, _tokenGive, _amountGive, block.timestamp);
+		}
+
+		function cancelOrder(uint256 _id) public {
+			_Order storage _order = orders[_id];
+			require(address(_order.user) == msg.sender, "You are not the owner of the order"); // Must be senders order
+			require(_order.id == _id, "The order does not exist"); // The order must exist
+			orderCancelled[_id] = true;
+			emit Cancel(
+				_id, 
+				msg.sender, 
+				_order.tokenGet, 
+				_order.amountGet, 
+				_order.tokenGive, 
+				_order.amountGive, 
+				block.timestamp);
 		}
 }
