@@ -12,15 +12,43 @@ contract Exchange {
     address constant ETHER = address(0); // Allows for storing Ether in tokens mapping.
     // Token address, user who deposited address, user balance
     mapping(address => mapping(address => uint256)) public tokens;
+		// Storage for orders
+		// Id generator cash
+		uint256 public orderCount;
+		mapping(uint256 => _Order) public orders;
 
     // Events
-    event Deposit(address token, address user, uint256 amount, uint256 balance);
-    event Withdraw(
-        address token,
-        address user,
-        uint256 amount,
-        uint256 balance
-    );
+    event Deposit(
+			address token, 
+			address user, 
+			uint256 amount, 
+			uint256 balance);
+    
+		event Withdraw(
+			address token,
+			address user, 
+			uint256 amount, 
+			uint256 balance);
+
+		event Order(
+			uint id, 
+			address user, 
+			address tokenGet, 
+			uint amountGet, 
+			address tokenGive, 
+			uint amountGive, 
+			uint timestamp);
+
+		// Model the order
+		struct _Order {
+			uint id;
+			address user;
+			address tokenGet;
+			uint amountGet;
+			address tokenGive;
+			uint amountGive;
+			uint timestamp;
+		}
 
     constructor(address _feeAccount, uint256 _feePercent) {
         feeAccount = _feeAccount;
@@ -62,5 +90,12 @@ contract Exchange {
 
 		function balanceOf(address _token, address _user) public view returns (uint256) {
 			return tokens[_token][_user];
+		}
+
+		// Add the order to storage
+		function makeOrder(address _tokenGet, uint256 _amountGet, address _tokenGive, uint256 _amountGive) public {
+			orderCount = orderCount.add(1);
+			orders[orderCount] = _Order(orderCount, msg.sender, _tokenGet, _amountGet, _tokenGive, _amountGive, block.timestamp);
+			emit Order(orderCount, msg.sender, _tokenGet, _amountGet, _tokenGive, _amountGive, block.timestamp);
 		}
 }
