@@ -224,6 +224,17 @@ contract("Exchange", ([deployer, feeAccount, user1]) => {
 			//console.log(order.timestamp.words)
 			order.timestamp.length.should.equal(2, "timestamp is present")
 		})
+
+		it("emits an Order event", async () => {
+			const log = result.logs[0]
+			log.event.should.equal("Order")
+			const event = log.args
+			event.tokenGet.should.equal(token.address, "tokenGet is correct")
+			event.amountGet.toString().should.equal(ether(1).toString(), "amountGet is correct")
+			event.tokenGive.toString().should.equal(ETHER_ADDRESS, "tokenGive is correct")
+			event.amountGive.toString().should.equal(tokens(1).toString(), "amountGive is correct")
+			event.user.should.equal(user1, "user is correct")
+		})
 	})
 })
 
@@ -238,3 +249,35 @@ contract("Exchange", ([deployer, feeAccount, user1]) => {
 // order.timestamp.words
 // [ 13486914, 24, <1 empty item> ]
 
+// result.logs
+
+// [
+//   {
+//     logIndex: 0,
+//     transactionIndex: 0,
+//     transactionHash: '0x235637a91a148399f3fb4887959b428563fff77b83f80edcdca5f66dd1ab8bf5',
+//     blockHash: '0x8bbf414079aae4b96a5b533252fe122027b100406a5a3b36d6fa5860be6620c1',
+//     blockNumber: 203,
+//     address: '0x160e7c350A879aa4Fea16eA258160583A706eEf6',
+//     type: 'mined',
+//     id: 'log_f27696f9',
+//     event: 'Order',
+//     args: Result {
+//       '0': [BN],
+//       '1': '0x75357E4B3EAC02a900338111b8664F9f16d34225',
+//       '2': '0xC10cF72e852F0A01698E219082043c6f14F2C5b1',
+//       '3': [BN],
+//       '4': '0x0000000000000000000000000000000000000000',
+//       '5': [BN],
+//       '6': [BN],
+//       __length__: 7,
+//       id: [BN],
+//       user: '0x75357E4B3EAC02a900338111b8664F9f16d34225',
+//       tokenGet: '0xC10cF72e852F0A01698E219082043c6f14F2C5b1',
+//       amountGet: [BN],
+//       tokenGive: '0x0000000000000000000000000000000000000000',
+//       amountGive: [BN],
+//       timestamp: [BN]
+//     }
+//   }
+// ]
