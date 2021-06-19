@@ -206,6 +206,7 @@ contract("Exchange", ([deployer, feeAccount, user1]) => {
 
 	describe("making orders", async () => {
 		let result
+		let timestamp
 
 		beforeEach(async () => {
 			result = await exchange.makeOrder(token.address, tokens(1), ETHER_ADDRESS, ether(1), { from: user1 })
@@ -214,7 +215,26 @@ contract("Exchange", ([deployer, feeAccount, user1]) => {
 		it("tracks the newly created order", async () => {
 			const orderCount = await exchange.orderCount()
 			orderCount.toString().should.equal("1")
+			const order = await exchange.orders("1") // Kolla varför fnuttar
+			order.id.toString().should.equal("1", "id is correct")
+			order.user.should.equal(user1, "user is correct")
+			order.amountGet.toString().should.equal(tokens(1).toString(), "amountGet is correct")
+			order.tokenGive.should.equal(ETHER_ADDRESS, "tokenGive is correct")
+			order.amountGive.toString().should.equal(ether(1).toString(), "amountGive is correct")
+			//console.log(order.timestamp.words)
+			order.timestamp.length.should.equal(2, "timestamp is present")
 		})
 	})
 })
+
+// order.timestamp
+// BN {
+//   negative: 0,
+//   words: [ 13486815, 24, <1 empty item> ],
+//   length: 2,
+//   red: null
+// }
+
+// order.timestamp.words
+// [ 13486914, 24, <1 empty item> ]
 
