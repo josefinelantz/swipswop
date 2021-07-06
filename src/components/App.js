@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import "./App.css";
-import Web3 from "web3";
+import { connect } from "react-redux";
 import Token from "../abis/Token.json";
-import { loadWeb3 } from "../store/interactions";
+import { loadWeb3, loadAccount } from "../store/interactions";
 
 class App extends Component {
   componentDidMount(props) {
@@ -13,7 +13,7 @@ class App extends Component {
     const web3 = loadWeb3(dispatch);
     const network = await web3.eth.net.getNetworkType();
     console.log("network", network);
-    const accounts = await web3.eth.getAccounts();
+    const account = await loadAccount(web3, dispatch);
     const networks = Token.networks;
     const networkId = await web3.eth.net.getId();
     const token = new web3.eth.Contract(Token.abi, Token.networks[networkId].address);
@@ -111,5 +111,9 @@ class App extends Component {
     );
   }
 }
-
-export default App;
+function mapStateToProps(state) {
+  return {
+    // Todo
+  }
+}
+export default connect(mapStateToProps)(App);
