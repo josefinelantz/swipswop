@@ -1,6 +1,6 @@
 import { combineReducers } from "redux";
 
-function web3(state = {}, action) {
+function web3Reducer(state = {}, action) {
 	switch (action.type) {
 		case "WEB3_LOADED":
 			return { ...state, connection: action.connection };
@@ -11,8 +11,6 @@ function web3(state = {}, action) {
 	}
 }
 
-const rootReducer = combineReducers({
-	web3: web3
+export default combineReducers({
+	web3Reducer
 });
-
-export default rootReducer; 

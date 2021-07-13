@@ -1,32 +1,61 @@
-import React, { Component } from "react";
+import React from "react";
 import "./App.css";
-import { connect } from "react-redux";
 import Token from "../abis/Token.json";
-import { loadWeb3, loadAccount } from "../store/interactions";
+import Web3 from "web3";
 
-class App extends Component {
-  componentDidMount(props) {
-    this.loadBlockchainData(this.props.dispatch)
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      account: "",
+      token: {},
+      ethBalance: "0",
+      tokenBalance: "0",
+      loading: true
+    };
   }
+  async componentDidMount() {
+    await this.loadWeb3();
+    await this.loadBlockchainData();
+  }
+  
+  async loadBlockchainData() {
+    const web3 = window.web3;
+    const accounts = await web3.eth.getAccounts();
+    this.setState({ account: accounts[0] });
+    const ethBalance = await web3.eth.getBalance(this.state.account);
+    this.setState({ ethBalance });
 
-  async loadBlockchainData(dispatch) {
-    const web3 = loadWeb3(dispatch);
-    const network = await web3.eth.net.getNetworkType();
-    console.log("network", network);
-    const account = await loadAccount(web3, dispatch);
-    const networks = Token.networks;
+    // Load token 
     const networkId = await web3.eth.net.getId();
-    const token = new web3.eth.Contract(Token.abi, Token.networks[networkId].address);
-    const totalSupply = await token.methods.totalSupply().call();
-    console.log("totalSupply", totalSupply);
+    const tokenData = Token.networks[networkId];
+    if (tokenData) {
+      const token = new web3.eth.Contract(Token.abi, tokenData.address);
+      this.setState({ token });
+      const tokenBalance = await token.methods.balanceOf(this.state.account).call()
+      this.setState({ tokenBalance: tokenBalance.toString() });
+    } else {
+      window.alert("Token contract not deployed to detected network.");
+    }
   }
+    
+    async loadWeb3() {
+      if (window.ethereum) {
+        window.web3 = new Web3(window.ethereum);
+        await window.ethereum.enable();
+      } else if (window.web3) {
+        window.web3 = new Web3(window.web3.currentProvider);
+      } else {
+        window.alert("Non-Ethereum browser detetcted. Consider using Chrome, Firefox or Brave.");
+      }
+    }
 
   render() {
     return (
       <div>
         <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
           <a className="navbar-brand" href="/#">Navbar</a>
-          <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+          <button className="navbar-toggler" type="button"  data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
             <span className="navbar-toggler-icon"></span>
           </button>
           <div className="collapse navbar-collapse" id="navbarNavDropdown">
@@ -111,9 +140,4 @@ class App extends Component {
     );
   }
 }
-function mapStateToProps(state) {
-  return {
-    // Todo
-  }
-}
-export default connect(mapStateToProps)(App);
+export default App;
