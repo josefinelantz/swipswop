@@ -1,4 +1,4 @@
-import { useStore } from "../reducers/store";
+import { useStore } from "./store";
 
 export const useStoreApi = () => {
   const { state, dispatch } = useStore();

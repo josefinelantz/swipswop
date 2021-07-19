@@ -2,7 +2,8 @@ import React from "react";
 import "./App.css";
 import Token from "../abis/Token.json";
 import { useWeb3 } from "../getweb3";
-import { useStoreApi } from "../apis/storeApi";
+import { useStoreApi } from "../storeApi";
+import { Button, TextField } from "@material-ui/core";
 
 function App() {
   const { 
@@ -81,8 +82,11 @@ function App() {
             </ul>
           </div>
         </nav>
+        
         <div className="content">
+          
           <div className="vertical-split">
+            
             <div className="card bg-dark text-white">
               <div className="card-header">
                 Card Title
