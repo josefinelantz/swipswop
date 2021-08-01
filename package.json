@@ -29,7 +29,9 @@
     "redux": "^4.1.0",
     "redux-logger": "^3.0.6",
     "reselect": "^4.0.0",
+    "semantic-ui-react": "^2.0.3",
     "solidity-coverage": "^0.7.16",
+    "styled-components": "^5.3.0",
     "truffle": "^5.3.10",
     "web-vitals": "^1.0.1"
   },

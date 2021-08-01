@@ -1,3 +1,131 @@
+.content {
+	display: grid;  /*inline-grid*/
+	grid-template-columns: 1fr 1fr 2fr 1fr;
+	grid-template-rows: 50%;
+	column-gap: 0.1em;
+	row-gap: 0.1em;
+	height: 100vh;
+  margin: 0;
+}
+
+.item {
+  padding: 13px;
+}
+
+.balance {
+	grid-column-start: 1;
+  grid-column-end: 2; 
+	background: red;
+}
+
+.orderbook {
+	grid-column-start: 2;
+	grid-column-end: 3;
+	grid-row-start: 1;
+	grid-row-end: 3;
+	background: blue;
+}
+
+.price-chart {
+	grid-column-start: 3;
+	grid-column-end: 4;
+	background: green;
+}
+
+.trades {
+	grid-column-start: 4;
+	grid-column-end: 5;
+	grid-row-start: 1;
+	grid-row-end: 3;
+	background: pink;
+}
+
+.new-order {
+		background: cyan;
+}
+
+.my-transactions {
+		background: grey;
+}
+
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0px;
+}
+
+.nav {
+  height: 50px;
+  width: 100%;
+  position: relative;
+}
+
+.nav > .nav-header {
+  display: inline;
+}
+
+.nav > .nav-header > .nav-title {
+  display: inline-block;
+  padding: 13px 10px 13px 10px;
+}
+
+.nav > .nav-links {
+  display: inline;
+  float: right;
+}
+
+.nav > .nav-links > a {
+  display: inline-block;
+  padding: 13px 10px 13px 10px;
+  text-decoration: none;
+}
+
+.nav > .nav-links > a:hover {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+@media (max-width:600px) {
+  .nav > .nav-btn {
+    display: inline-block;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+  }
+  .nav > .nav-btn > label {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    padding: 13px;
+  }
+  .nav > .nav-btn > label:hover,.nav  #nav-check:checked ~ .nav-btn > label {
+    background-color: rgba(0, 0, 0, 0.3);
+  }
+  .nav > .nav-btn > label > span {
+    display: block;
+    width: 25px;
+    height: 10px;
+    border-top: 2px solid #eee;
+  }
+  .nav > .nav-links {
+    position: absolute;
+    display: block;
+    width: 100%;
+    background-color: #333;
+    height: 0px;
+    transition: all 0.3s ease-in;
+    overflow-y: hidden;
+    top: 50px;
+    left: 0px;
+  }
+  .nav > .nav-links > a {
+    display: block;
+    width: 100%;
+  }
+}
+/* 
 .content  {
   background-color: #1d1d1d;
   position: absolute;
@@ -151,4 +279,4 @@ td.cancel-order {
 
 tr.order-book-order {
   cursor: pointer;
-}
+} */
