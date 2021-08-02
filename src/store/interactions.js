@@ -63,14 +63,13 @@ export const loadToken = async (web3, networkId, dispatch) => {
 }
 
 export const loadExchange = async (web3, networkId, dispatch) => {
-  console.log(networkId);
   try {
-    const exchange = new web3.eth.Contract(Exchange.abi, Exchange.networks[networkId].address)
-    dispatch(exchangeLoaded(exchange))
-    return exchange
+    const exchange = new web3.eth.Contract(Exchange.abi, Exchange.networks[networkId].address);
+    dispatch(exchangeLoaded(exchange));
+    return exchange;
   } catch (error) {
-    console.log('Contract not deployed to the current network. Please select another network with Metamask.')
-    return null
+    console.log('Contract not deployed to the current network. Please select another network with Metamask.');
+    return null;
   }
 }
 

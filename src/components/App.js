@@ -7,13 +7,14 @@ import { connect } from "react-redux";
 import {
   loadWeb3,
   loadAccount,
-  loadToken
+  loadToken,
+  loadExchange
 } from "../store/interactions";
 import {
   web3Loaded,
   web3AccountLoaded,
   tokenLoaded,
-  loadExchange
+  exchangeLoaded
 } from "../store/actions";
 import { contractsLoadedSelector } from "../store/selectors";
 
@@ -28,8 +29,8 @@ class App extends React.Component {
     //const network = await web3.eth.net.getNetworkType();
     const networkId = await web3.eth.net.getId();
     const account = await loadAccount(web3, dispatch);
-    const token = await loadToken(web3, networkId, dispatch);
-    const exchange = await loadExchange();
+    const token = loadToken(web3, networkId, dispatch);
+    const exchange = loadExchange(web3, networkId, dispatch);
   }
     
   render() {

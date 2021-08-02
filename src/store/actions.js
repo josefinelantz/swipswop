@@ -24,6 +24,13 @@ export function tokenLoaded(contract) {
   };
 };
 
+export function exchangeLoaded(contract) {
+  return {
+    type: "EXCHANGE_LOADED",
+    contract
+  };
+};
+
 
 export const loadExchange = () => {
   return async (dispatch) => {
@@ -208,14 +215,6 @@ export const makeSellOrder = (dispatch, exchange, token, web3, order, account) =
     console.error(error)
     window.alert(`There was an error!`)
   })
-}
-
-// EXCHANGE
-export function exchangeLoaded(contract) {
-  return {
-    type: 'EXCHANGE_LOADED',
-    contract
-  }
 }
 
 export function cancelledOrdersLoaded(cancelledOrders) {
