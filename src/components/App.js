@@ -1,86 +1,50 @@
+import Web3 from "web3";
 import React from "react";
 import "./App.css";
-import Token from "../abis/Token.json";
-import web3 from "../web3";
-import {Header} from "./Header";
+import Navbar from "./Navbar";
+import Content from "./Content";
+import { connect } from "react-redux";
+import {
+  loadWeb3,
+  loadAccount,
+  loadToken
+} from "../store/interactions";
+import {
+  web3Loaded,
+  web3AccountLoaded,
+  tokenLoaded,
+  loadExchange
+} from "../store/actions";
+import { contractsLoadedSelector } from "../store/selectors";
 
 class App extends React.Component {
 
-  async componentDidMount() {
-    const accounts = await web3.eth.getAccounts();
+  componentDidMount() {
+    this.loadBlockchainData(this.props.dispatch);
+  }
 
-    // loadTokenContract = async () => {
+  async loadBlockchainData(dispatch) {
+    const web3 = await loadWeb3(dispatch);
+    //const network = await web3.eth.net.getNetworkType();
     const networkId = await web3.eth.net.getId();
-    const tokenData = Token.networks[networkId];
-
-    if (tokenData) {
-      const token = new web3.eth.Contract(Token.abi, tokenData.address);
-      // const exchange = new web3.eth.Contract(Exchange.abi, tokenData.address);
-    }
-
-  }    
+    const account = await loadAccount(web3, dispatch);
+    const token = await loadToken(web3, networkId, dispatch);
+    const exchange = await loadExchange();
+  }
+    
   render() {
-    web3.eth.getAccounts().
-    then(console.log);
-
     return (
       <div>
-        <div>
-          <Header />
-        </div>
- 
-        <div className="content">
-          <div className="item balance">Balance</div>
-          <div className="item orderbook">Orderbook</div>
-          <div className="item price-chart">Price Chart</div>
-	        <div className="item trades">Trades</div>
-          <div className="item new-order">New Order</div>
-          <div className="item my-transactions">My Transactions</div>
-        </div>     
-      </div>  
-      );
-    }
+        <Navbar />
+        { this.props.contractsLoaded ? <Content /> : <div className="content"></div> }
+      </div>
+    );
   }
-  // setUserAccount = async () => {
-  //   if (window.ethereum) {
-  //     await window.ethereum.enable();
-  //     web3.eth.getAccounts().then(accounts => {
-  //       setAccount(accounts[0]);
-  //       setEthBalance(accounts[0]);
-  //     });
-  //   }
-  // }
+}
 
-  // setUserEthBalance = async (fromAddress) => {
-  //   await web3.eth.getBalance(fromAddress).then(value => {
-  //     const credit = web3.utils.fromWei(value, "ether");
-  //     setEthBalance(credit.toString());
-  //   });
-  // }
-
-  // setUserTokenBalance = async (fromAddress) => {
-  //   const userTokenBalance = await token.methods.balanceOf(account).call(); 
-  //   if (userTokenBalance) {
-  //     setTokenBalance(userTokenBalance.toString());
-  //   } else {
-  //     window.alert("Token contract not deployed to detected network.");
-  //   }
-  // }
-
-  // sendTransaction = async (event) => {
-  //   event.preventDefault();
-  //   const amount = event.target[0].value;
-  //   const recipient = event.target[1].value;
-  //   await web3.eth.sendTransaction({
-  //     from: account,
-  //     to: recipient,
-  //     value: web3.utils.toWei(amount, "ether")
-  //   });
-  //   setUserEthBalance(account);
-  // };
-
-
-
-    
-
-export default App;
+function mapStateToProps(state) {
+  return {
+    contractsLoaded: contractsLoadedSelector(state)  
+  }
+}
+export default connect(mapStateToProps)(App);
