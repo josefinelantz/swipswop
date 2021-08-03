@@ -24,6 +24,8 @@ export function tokenLoaded(contract) {
   };
 };
 
+// EXCHANGE
+
 export function exchangeLoaded(contract) {
   return {
     type: "EXCHANGE_LOADED",
@@ -31,41 +33,26 @@ export function exchangeLoaded(contract) {
   };
 };
 
-
-export const loadExchange = () => {
-  return async (dispatch) => {
-    const networkId = await web3.eth.net.getId();
-    const exchangeData = Exchange.networks[networkId];
-
-    if (exchangeData) {
-      const exchange = new web3.eth.Contract(Exchange.abi, exchangeData.address);
-      dispatch({ type: "LOAD_EXCHANGE", payload: exchange })
-    }
-    
+export function cancelledOrdersLoaded(cancelledOrders) {
+  return {
+    type: "CANCELLED_ORDERS_LOADED",
+    cancelledOrders
   };
-}
-export const loadAllOrders = async (exchange, dispatch) => {
-  // Fetch cancelled orders with the "Cancel" event stream
-  const cancelStream = await exchange.getPastEvents('Cancel', { fromBlock: 0, toBlock: 'latest' })
-  // Format cancelled orders
-  const cancelledOrders = cancelStream.map((event) => event.returnValues)
-  // Add cancelled orders to the redux store
-  dispatch(cancelledOrdersLoaded(cancelledOrders))
+};
 
-  // Fetch filled orders with the "Trade" event stream
-  const tradeStream = await exchange.getPastEvents('Trade', { fromBlock: 0, toBlock: 'latest' })
-  // Format filled orders
-  const filledOrders = tradeStream.map((event) => event.returnValues)
-  // Add cancelled orders to the redux store
-  dispatch(filledOrdersLoaded(filledOrders))
+export function filledOrdersLoaded(filledOrders) {
+  return {
+    type: "FILLED_ORDERS_LOADED",
+    filledOrders
+  };
+};
 
-  // Load order stream
-  const orderStream = await exchange.getPastEvents('Order', { fromBlock: 0,  toBlock: 'latest' })
-  // Format order stream
-  const allOrders = orderStream.map((event) => event.returnValues)
-  // Add open orders to the redux store
-  dispatch(allOrdersLoaded(allOrders))
-}
+export function allOrdersLoaded(allOrders) {
+  return {
+    type: "ALL_ORDERS_LOADED",
+    allOrders
+  };
+};
 
 export const subscribeToEvents = async (exchange, dispatch) => {
   exchange.events.Cancel({}, (error, event) => {
@@ -215,27 +202,6 @@ export const makeSellOrder = (dispatch, exchange, token, web3, order, account) =
     console.error(error)
     window.alert(`There was an error!`)
   })
-}
-
-export function cancelledOrdersLoaded(cancelledOrders) {
-  return {
-    type: 'CANCELLED_ORDERS_LOADED',
-    cancelledOrders
-  }
-}
-
-export function filledOrdersLoaded(filledOrders) {
-  return {
-    type: 'FILLED_ORDERS_LOADED',
-    filledOrders
-  }
-}
-
-export function allOrdersLoaded(allOrders) {
-  return {
-    type: 'ALL_ORDERS_LOADED',
-    allOrders
-  }
 }
 
 // Cancel Order

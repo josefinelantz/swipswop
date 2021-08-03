@@ -1,13 +1,13 @@
 import React from "react";
 import { connect } from "react-redux";
 import { exchangeSelector } from "../store/selectors";
-import { loadAllOrders, subscribeToEvents } from "../store/actions";
-import OrderBook from "./OrderBook";
+import { loadAllOrders } from "../store/interactions";
 import Trades from "./Trades";
-import MyTransactions from "./MyTransactions";
-import PriceChart from "./PriceChart";
-import Balance from "./Balance";
-import NewOrder from "./NewOrder";
+//import OrderBook from "./OrderBook";
+// import MyTransactions from "./MyTransactions";
+// import PriceChart from "./PriceChart";
+// import Balance from "./Balance";
+// import NewOrder from "./NewOrder";
 
 class Content extends React.Component {
   componentDidMount() {
@@ -17,20 +17,15 @@ class Content extends React.Component {
   async loadBlockchainData(props) {
     const { dispatch, exchange } = props;
     await loadAllOrders(exchange, dispatch);
-    await subscribeToEvents(exchange, dispatch);
+    //await subscribeToEvents(exchange, dispatch);
   }
 
   render() {
     return (
       <div className="content">
         <div className="vertical-split">
-          <Balance />
-          <NewOrder />
         </div>
-        <OrderBook />
         <div className="vertical-split">
-          <PriceChart />
-          <MyTransactions />
         </div>
         <Trades />
       </div>

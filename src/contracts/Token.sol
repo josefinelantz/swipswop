@@ -1,14 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.4.22 <0.9.0;
 
-import "../../node_modules/@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 contract Token {
     using SafeMath for uint256;
-    // State variables belong to the smart contract and represents the status. Like a db table
+
+    // Variables
     string public name = "DApp Token";
     string public symbol = "DAPP";
-    uint8 public decimals = 18;
+    uint256 public decimals = 18;
     uint256 public totalSupply;
 
     // Store information on account balances on the blockchain
@@ -20,15 +21,11 @@ contract Token {
     // Deployer could have many different places where tokens are delegated
     mapping(address => mapping(address => uint256)) public allowance;
 
-    //mapping(address => uint256) private _balances;
-
     // Events (indexed enables filtering of events to subscribe to)
     event Transfer(address indexed from, address indexed to, uint256 value);
-    event Approval(
-        address indexed owner,
-        address indexed spender,
-        uint256 value
-    );
+    event Approval(address indexed owner, address indexed spender, uint256 value);
+
+    mapping(address => uint256) private _balances;
 
     constructor() {
         // name = _name;
@@ -92,6 +89,4 @@ contract Token {
         emit Approval(msg.sender, _spender, _value);
         return true;
     }
-
-    //function allowance(address _owner, address _spender) public view returns (uint256 remaining)
 }

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.4.22 <0.9.0;
 
-import "../../node_modules/@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "./Token.sol";
 
 contract Exchange {
@@ -121,16 +121,9 @@ contract Exchange {
 
 		// Add the order to storage
 		function makeOrder(address _tokenGet, uint256 _amountGet, address _tokenGive, uint256 _amountGive) public {
-			uint _id = 1;
 			orderCount = orderCount.add(1);
-			_Order storage _order = orders[_id];
-			_order.id = orderCount;
-			_order.user = msg.sender;
-			_order.tokenGet = _tokenGet; 
-			_order.amountGet = _amountGet;
-			_order.tokenGive = _tokenGive;
-			_order.amountGive = _amountGive; 
-			_order.timestamp = block.timestamp;
+			orders[orderCount] = _Order(orderCount, msg.sender,_tokenGet, _amountGet, _tokenGive, _amountGive, block.timestamp);
+			
 			emit Order(orderCount, msg.sender, _tokenGet, _amountGet, _tokenGive, _amountGive, block.timestamp);
 		}
 
