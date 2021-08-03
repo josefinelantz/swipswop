@@ -1,4 +1,3 @@
-import Web3 from "web3";
 import React from "react";
 import "./App.css";
 import Navbar from "./Navbar";
@@ -10,34 +9,36 @@ import {
   loadToken,
   loadExchange
 } from "../store/interactions";
-import {
-  web3Loaded,
-  web3AccountLoaded,
-  tokenLoaded,
-  exchangeLoaded
-} from "../store/actions";
 import { contractsLoadedSelector } from "../store/selectors";
 
 class App extends React.Component {
-
   componentDidMount() {
     this.loadBlockchainData(this.props.dispatch);
   }
 
   async loadBlockchainData(dispatch) {
     const web3 = await loadWeb3(dispatch);
-    //const network = await web3.eth.net.getNetworkType();
+    const network = await web3.eth.net.getNetworkType();
     const networkId = await web3.eth.net.getId();
     const account = await loadAccount(web3, dispatch);
-    const token = loadToken(web3, networkId, dispatch);
-    const exchange = loadExchange(web3, networkId, dispatch);
-  }
     
+    const token = await loadToken(web3, networkId, dispatch);
+    if (!token) {
+      window.alert("Token smart contract not detected on the current network Please select another network with Metamask.");
+    }
+    
+    const exchange = await loadExchange(web3, networkId, dispatch);
+    if (!exchange) {
+      window.alert("Exchange smart contract not detected on the current network Please select another network with Metamask.");
+    }
+  }
+  
   render() {
     return (
       <div>
         <Navbar />
-        { this.props.contractsLoaded ? <Content /> : <div className="content"></div> }
+        {this.props.contractsLoaded ?  <Content /> 
+        : <div className="content"></div>}
       </div>
     );
   }
@@ -45,7 +46,8 @@ class App extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    contractsLoaded: contractsLoadedSelector(state)  
+    // This will be accessible as props in render function. 
+    contractsLoaded: contractsLoadedSelector(state)
   }
 }
 export default connect(mapStateToProps)(App);

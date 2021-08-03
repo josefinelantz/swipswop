@@ -1,7 +1,28 @@
-import { get, groupBy, reject, maxBy, minBy } from 'lodash'
-import { createSelector } from 'reselect'
-import moment from 'moment'
-import { ETHER_ADDRESS, GREEN, RED, ether, tokens } from '../helpers'
+import { get, groupBy, reject, maxBy, minBy } from "lodash";
+import { createSelector } from "reselect";
+import moment from "moment";
+import { ETHER_ADDRESS, GREEN, RED, ether, tokens } from "../helpers";
+
+const account = state => get(state, "web3.account"); 
+export const accountSelector = createSelector(account, (account) => {
+  return account;
+});
+
+const tokenLoaded = state => get(state, "token.loaded", false);
+export const tokenLoadedSelector = createSelector(tokenLoaded, (tokenLoaded) => {
+  return tokenLoaded;
+});
+
+const exchangeLoaded = state => get(state, "exchange.loaded", false);
+export const exchangeLoadedSelector = createSelector(exchangeLoaded, (exchangeLoaded) => {
+  return exchangeLoaded; 
+});
+
+export const contractsLoadedSelector = createSelector(
+  tokenLoaded, 
+  exchangeLoaded,
+  (tokenLoaded, exchangeLoaded) => (tokenLoaded && exchangeLoaded)
+);
 
 // TODO: Move me to helpers file
 export const formatBalance = (balance) => {
@@ -13,29 +34,16 @@ export const formatBalance = (balance) => {
   return balance
 }
 
-const account = state => get(state, 'web3.account')
-export const accountSelector = createSelector(account, a => a)
-
 const web3 = state => get(state, 'web3.connection')
 export const web3Selector = createSelector(web3, w => w)
 
-const tokenLoaded = state => get(state, 'token.loaded', false)
-export const tokenLoadedSelector = createSelector(tokenLoaded, tl => tl)
 
 const token = state => get(state, 'token.contract')
 export const tokenSelector = createSelector(token, t => t)
 
-const exchangeLoaded = state => get(state, 'exchange.loaded', false)
-export const exchangeLoadedSelector = createSelector(exchangeLoaded, el => el)
 
 const exchange = state => get(state, 'exchange.contract')
 export const exchangeSelector = createSelector(exchange, e => e)
-
-export const contractsLoadedSelector = createSelector(
-  tokenLoaded,
-  exchangeLoaded,
-  (tl, el) => (tl && el)
-)
 
 // All Orders
 const allOrdersLoaded = state => get(state, 'exchange.allOrders.loaded', false)

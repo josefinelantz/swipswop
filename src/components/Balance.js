@@ -182,12 +182,12 @@ const showForm = (props) => {
 
 class Balance extends Component {
   componentDidMount() {
-    this.loadBlockchainData()
+    this.loadBlockchainData();
   }
 
   async loadBlockchainData() {
-    const { dispatch, web3, exchange, token, account } = this.props
-    await loadBalances(dispatch, web3, exchange, token, account)
+    const { dispatch, web3, exchange, token, account } = this.props;
+    await loadBalances(dispatch, web3, exchange, token, account);
   }
 
   render() {

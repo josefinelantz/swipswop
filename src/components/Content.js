@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import { connect } from "react-redux";
 import { exchangeSelector } from "../store/selectors";
 import { loadAllOrders, subscribeToEvents } from "../store/actions";
@@ -9,15 +9,15 @@ import PriceChart from "./PriceChart";
 import Balance from "./Balance";
 import NewOrder from "./NewOrder";
 
-class Content extends Component {
-  componentWillMount() {
+class Content extends React.Component {
+  componentDidMount() {
     this.loadBlockchainData(this.props)
   }
 
   async loadBlockchainData(props) {
-    const { dispatch, exchange } = props
-    await loadAllOrders(exchange, dispatch)
-    await subscribeToEvents(exchange, dispatch)
+    const { dispatch, exchange } = props;
+    await loadAllOrders(exchange, dispatch);
+    await subscribeToEvents(exchange, dispatch);
   }
 
   render() {
@@ -44,4 +44,4 @@ function mapStateToProps(state) {
   }
 }
 
-export default connect(mapStateToProps)(Content)
+export default connect(mapStateToProps)(Content);

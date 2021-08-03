@@ -1,3 +1,7 @@
+/*
+Handles the logic related to configuring the store - including importing reducers, middleware, and enhancers.
+*/
+
 import { createStore, applyMiddleware, compose } from "redux";
 import { createLogger } from "redux-logger";
 import rootReducer from "./reducers"
@@ -13,5 +17,5 @@ export default function configureStore(preloadedState) {
     rootReducer,
     preloadedState,
     composeEnhancers(applyMiddleware(...middleware, loggerMiddleware))
-  )
+  );
 }

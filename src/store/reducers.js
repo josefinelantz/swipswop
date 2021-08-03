@@ -14,7 +14,7 @@ function web3(state = {}, action) {
 function token(state = {}, action) {
   switch (action.type) {
     case "TOKEN_LOADED":
-      return { ...state, contract: action.contract };
+      return { ...state, loaded: true, contract: action.contract };
     // case 'TOKEN_BALANCE_LOADED':
     //   return { ...state, balance: action.balance }
     default:
@@ -133,7 +133,8 @@ function exchange(state = {}, action) {
 
 const rootReducer = combineReducers({
   web3,
-  token
+  token,
+  exchange
 })
 
 export default rootReducer
