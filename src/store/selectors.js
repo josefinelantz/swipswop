@@ -215,8 +215,8 @@ const decorateMyFilledOrders = (orders, account) => {
       order = decorateMyFilledOrder(order, account);
       return(order);
     })
-  );
-};
+  )
+}
 
 const decorateMyFilledOrder = (order, account) => {
   const myOrder = order.user === account;
@@ -233,8 +233,8 @@ const decorateMyFilledOrder = (order, account) => {
     orderType,
     orderTypeClass: (orderType === "buy" ? GREEN : RED),
     orderSign: (orderType === "buy" ? "+" : "-")
-  });
-};
+  })
+}
 
 export const myOpenOrdersLoadedSelector = createSelector(orderBookLoaded, loaded => loaded);
 
@@ -252,23 +252,23 @@ export const myOpenOrdersSelector = createSelector(
   }
 );
 
-const decorateMyOpenOrders = (orders, account) => {
+const decorateMyOpenOrders = (orders) => {
   return(
     orders.map((order) => {
       order = decorateOrder(order);
-      order = decorateMyOpenOrder(order, account);
+      order = decorateMyOpenOrder(order);
       return(order);
     })
   );
 }
 
-const decorateMyOpenOrder = (order, account) => {
+const decorateMyOpenOrder = (order) => {
   let orderType = order.tokenGive === ETHER_ADDRESS ? "buy" : "sell";
 
   return({
     ...order,
     orderType,
-    orderTypeClass: (orderType === "buy" ? GREEN : RED)
+    orderTypeClass: orderType === "buy" ? GREEN : RED
   });
 };
 

@@ -1,13 +1,47 @@
 import React from "react";
 import { connect } from "react-redux";
 import { Tabs, Tab } from "react-bootstrap";
-// import Spinner from "./Spinner";
+import Spinner from "./Spinner";
 import {
   myFilledOrdersLoadedSelector,
   myFilledOrdersSelector,
   myOpenOrdersLoadedSelector,
   myOpenOrdersSelector
 } from "../store/selectors";
+
+const showMyFilledOrders = (myFilledOrders) => {
+	return(
+		<tbody>
+			{ myFilledOrders.map((order) => {
+				return(
+					<tr key={order.id}>
+						<td className="text-muted">{order.formattedTimestamp}</td>
+						<td className={`text-${order.orderTypeClass}`}>
+							{order.orderSign}{order.tokenAmount}
+						</td>
+						<td className={`text-${order.orderTypeClass}`}>{order.tokenPrice}</td>
+					</tr>
+				)
+			})}
+		</tbody>
+	)
+}
+
+const showMyOpenOrders = (myOpenOrders) => {
+	return(
+		<tbody>
+			{ myOpenOrders.map((order) => {
+				return(
+					<tr key={order.id}>
+						<td className={`text-${order.orderTypeClass}`}>{order.tokenAmount}</td>
+						<td className={`text-${order.orderTypeClass}`}>{order.tokenPrice}</td>
+						<td className="text-muted">X</td>
+					</tr>
+				)
+			})}
+		</tbody>
+	)
+}
 
 
 class MyTransactions extends React.Component {
@@ -28,6 +62,7 @@ class MyTransactions extends React.Component {
                     <th>DAPP/ETH</th>
                   </tr>
                 </thead>
+								{ this.props.showMyFilledOrders ? showMyFilledOrders(this.props.myFilledOrders) : <Spinner type="table"/>}
               </table>
             </Tab>
             <Tab eventKey="orders" title="Orders">
@@ -39,7 +74,8 @@ class MyTransactions extends React.Component {
                     <th>Cancel</th>
                   </tr>
                 </thead>
-               
+                { this.props.showMyOpenOrders ? showMyOpenOrders(this.props.myOpenOrders) : <Spinner type="table"/>}
+
               </table>
             </Tab>
           </Tabs>
@@ -50,12 +86,11 @@ class MyTransactions extends React.Component {
 }
 
 function mapStateToProps(state) {
-  const myOpenOrdersLoaded = myOpenOrdersLoadedSelector(state)
-
   return {
     myFilledOrders: myFilledOrdersSelector(state),
     showMyFilledOrders: myFilledOrdersLoadedSelector(state),
-    myOpenOrders: myOpenOrdersSelector(state)  
+    myOpenOrders: myOpenOrdersSelector(state),
+		showMyOpenOrders: myOpenOrdersLoadedSelector(state)
 	}
 };
 
