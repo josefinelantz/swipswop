@@ -23,7 +23,6 @@ function token(state = {}, action) {
 }
 
 function exchange(state = {}, action) {
-  let index, data; 
   switch (action.type) {
     case "EXCHANGE_LOADED":
       return { ...state, loaded: true, contract: action.contract };

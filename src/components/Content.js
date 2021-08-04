@@ -4,7 +4,7 @@ import { exchangeSelector } from "../store/selectors";
 import { loadAllOrders } from "../store/interactions";
 import Trades from "./Trades";
 import OrderBook from "./OrderBook";
-// import MyTransactions from "./MyTransactions";
+import MyTransactions from "./MyTransactions";
 // import PriceChart from "./PriceChart";
 // import Balance from "./Balance";
 // import NewOrder from "./NewOrder";
@@ -40,17 +40,7 @@ class Content extends React.Component {
               <a href="#" className="card-link">Card Link</a>
             </div>
           </div>
-          <div className="vertical-split">
-          <div className="card-bg-dark text-white">
-            <div className="card-header">
-              Card Title
-            </div>
-            <div className="card-body">
-              <p className="card-text">some text</p>
-              <a href="#" className="card-link">Card Link</a>
-            </div>
-          </div>
-          </div>
+          <MyTransactions />
         </div>
         <Trades />
       </div>
