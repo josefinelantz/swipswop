@@ -1,7 +1,14 @@
-import React, { Component } from "react";
-import { connect } from "react-redux";
-import { Tabs, Tab } from "react-bootstrap";
-import Spinner from "./Spinner";
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { Tabs, Tab } from 'react-bootstrap'
+import Spinner from './Spinner'
+import {
+  loadBalances,
+  depositEther,
+  depositToken,
+  withdrawEther,
+  withdrawToken
+} from '../store/interactions'
 import {
   exchangeSelector,
   tokenSelector,
@@ -16,18 +23,13 @@ import {
   etherWithdrawAmountSelector,
   tokenDepositAmountSelector,
   tokenWithdrawAmountSelector,
-} from "../store/selectors"
+} from '../store/selectors'
 import {
   etherDepositAmountChanged,
   etherWithdrawAmountChanged,
   tokenDepositAmountChanged,
   tokenWithdrawAmountChanged,
-	loadBalances,
-  depositEther,
-  depositToken,
-  withdrawEther,
-  withdrawToken
-} from "../store/actions"
+} from '../store/actions'
 const showForm = (props) => {
   const {
     dispatch,
@@ -86,7 +88,7 @@ const showForm = (props) => {
         <table className="table table-dark table-sm small">
           <tbody>
             <tr>
-              <td>DAPP</td>
+              <td>CAMEL</td>
               <td>{tokenBalance}</td>
               <td>{exchangeTokenBalance}</td>
             </tr>
@@ -100,7 +102,7 @@ const showForm = (props) => {
           <div className="col-12 col-sm pr-sm-2">
             <input
             type="text"
-            placeholder="DAPP Amount"
+            placeholder="CAMEL Amount"
             onChange={(e) => dispatch( tokenDepositAmountChanged(e.target.value) )}
             className="form-control form-control-sm bg-dark text-white"
             required />
@@ -151,7 +153,7 @@ const showForm = (props) => {
         <table className="table table-dark table-sm small">
           <tbody>
             <tr>
-              <td>DAPP</td>
+              <td>CAMEL</td>
               <td>{tokenBalance}</td>
               <td>{exchangeTokenBalance}</td>
             </tr>
@@ -165,7 +167,7 @@ const showForm = (props) => {
           <div className="col-12 col-sm pr-sm-2">
             <input
             type="text"
-            placeholder="DAPP Amount"
+            placeholder="CAMEL Amount"
             onChange={(e) => dispatch( tokenWithdrawAmountChanged(e.target.value) )}
             className="form-control form-control-sm bg-dark text-white"
             required />
@@ -182,12 +184,12 @@ const showForm = (props) => {
 
 class Balance extends Component {
   componentDidMount() {
-    this.loadBlockchainData();
+    this.loadBlockchainData()
   }
 
   async loadBlockchainData() {
-    const { dispatch, web3, exchange, token, account } = this.props;
-    await loadBalances(dispatch, web3, exchange, token, account);
+    const { dispatch, web3, exchange, token, account } = this.props
+    await loadBalances(dispatch, web3, exchange, token, account)
   }
 
   render() {

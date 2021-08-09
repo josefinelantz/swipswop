@@ -29,7 +29,9 @@ const renderOrder = (order, props) => {
 				onClick={(e) => fillOrder(dispatch, exchange, order, account)}
 			>
 				<td>{order.tokenAmount}</td>
-				<td className={`text-${order.orderTypeClass}`}>{order.tokenPrice}</td>
+				<td 
+					className={`text-${order.orderTypeClass}`}>{order.tokenPrice}
+				</td>
 				<td>{order.etherAmount}</td>
 			</tr>
 		</OverlayTrigger>
@@ -37,18 +39,16 @@ const renderOrder = (order, props) => {
 }
 
 const showOrderBook = (props) => {
-	
 	const { orderBook } = props; 
-	console.log(orderBook);
 	return(
 		<tbody>
-			{/* { orderBook.buyOrders.map((order) => renderOrder(order, props))} */}
+			{ orderBook.sellOrders.map((order) => renderOrder(order, props)) }
 			<tr>
-				<th>DAPP</th>
-				<th>DAPP/ETH</th>
+				<th>CAMEL</th>
+				<th>CAMEL/ETH</th>
 				<th>ETH</th>
 			</tr>
-			{ orderBook.sellOrders.map((order) => renderOrder(order, props)) }
+			{ orderBook.buyOrders.map((order) => renderOrder(order, props)) }
 		</tbody>
 	)
 }

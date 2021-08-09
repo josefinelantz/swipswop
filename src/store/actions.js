@@ -1,58 +1,47 @@
-import web3 from "../web3";
-import Token from "../abis/Token.json";
-import Exchange from "../abis/Exchange.json";
-import { ETHER_ADDRESS } from "../helpers";
-
+// WEB3
 export function web3Loaded(connection) {
   return {
-    type: "WEB3_LOADED",
-    connection 
-  };
-};
+    type: 'WEB3_LOADED',
+    connection
+  }
+}
 
 export function web3AccountLoaded(account) {
   return {
-    type: "WEB3_ACCOUNT_LOADED",
+    type: 'WEB3_ACCOUNT_LOADED',
     account
-  };
-};
+  }
+}
 
+// TOKEN
 export function tokenLoaded(contract) {
   return {
-    type: "TOKEN_LOADED",
+    type: 'TOKEN_LOADED',
     contract
-  };
-};
+  }
+}
 
 // EXCHANGE
-
 export function exchangeLoaded(contract) {
   return {
-    type: "EXCHANGE_LOADED",
+    type: 'EXCHANGE_LOADED',
     contract
-  };
-};
+  }
+}
 
 export function cancelledOrdersLoaded(cancelledOrders) {
   return {
-    type: "CANCELLED_ORDERS_LOADED",
+    type: 'CANCELLED_ORDERS_LOADED',
     cancelledOrders
-  };
-};
+  }
+}
 
 export function filledOrdersLoaded(filledOrders) {
   return {
-    type: "FILLED_ORDERS_LOADED",
+    type: 'FILLED_ORDERS_LOADED',
     filledOrders
-  };
-};
-
-export function OrdersLoaded(filledOrders) {
-  return {
-    type: "FILLED_ORDERS_LOADED",
-    filledOrders
-  };
-};
+  }
+}
 
 export function allOrdersLoaded(allOrders) {
   return {
@@ -64,7 +53,7 @@ export function allOrdersLoaded(allOrders) {
 // Cancel Order
 export function orderCancelling() {
   return {
-    type: "ORDER_CANCELLING"
+    type: 'ORDER_CANCELLING'
   }
 }
 
