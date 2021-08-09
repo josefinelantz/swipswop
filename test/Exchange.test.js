@@ -1,122 +1,121 @@
-import { assert, should } from "chai";
+import chai, { should } from "chai";
+import chaiAsPromised from "chai-as-promised";
 import { tokens, ether, EVM_REVERT, ETHER_ADDRESS } from "./helpers";
 
 const Token = artifacts.require("Token");
 const Exchange = artifacts.require("Exchange");
 
-require("chai")
-	.use(require("chai-as-promised"))
-	.should()
+chai.use(chaiAsPromised);
+chai.should();
 
 contract("Exchange", ([deployer, feeAccount, user1, user2]) => {
-	let token
-	let exchange 
+	let token;
+	let exchange; 
 	const feePercent = 10;
-	let result
+	let result;
 
 	beforeEach(async () => {
 		// Deploy token
 		token = await Token.new();
 		// Deploy exchange
-		exchange = await Exchange.new(feeAccount, feePercent)
+		exchange = await Exchange.new(feeAccount, feePercent);
 		// Transfer tokens to user 1
-		token.transfer(user1, tokens(100), { from: deployer })
-	})
+		token.transfer(user1, tokens(100), { from: deployer });
+	});
 
 	describe("deployment", () => {
 		let result
 		it("tracks the fee account", async () => {
-			result = await exchange.feeAccount() 
+			result = await exchange.feeAccount();
 			result.should.equal(feeAccount)
-		})
+		});
 
 		it("tracks the fee percent", async () => {
-			result = await exchange.feePercent() 
-			result.toString().should.equal(feePercent.toString())
-		})
-	})
+			result = await exchange.feePercent();
+			result.toString().should.equal(feePercent.toString());
+		});
+	});
 
 	describe("fallback", () => {
 		it("reverts when Ether is sent", async () => {
-			await exchange.sendTransaction({ value: 1, from: user1 }).should.be.rejectedWith(EVM_REVERT)
-		})
-	})
+			await exchange.sendTransaction({ value: 1, from: user1 }).should.be.rejectedWith(EVM_REVERT);
+		});
+	});
 
 	describe("depositing ether", async () => {
-		let result
-		let amount
+		let result;
+		let amount;
 
 		beforeEach(async () => {
-			amount = ether(10)
-			result = await exchange.depositEther({ from: user1, value: amount} )
-		})
+			amount = ether(10);
+			result = await exchange.depositEther({ from: user1, value: amount} );
+		});
 		
 		it("tracks the Ether deposit", async () => {
 			// Check the token balance
 			const balance = await exchange.tokens(ETHER_ADDRESS, user1)
-			balance.toString().should.equal(amount.toString())
-		})
+			balance.toString().should.equal(amount.toString());
+		});
 
 		it("emits a Deposit event", async () => {
-			const log = result.logs[0]
-			log.event.should.eq("Deposit")
-			const event = log.args
-			event.token.should.equal(ETHER_ADDRESS, "token address is correct")
-			event.user.should.equal(user1, "user address is correct")
-			event.amount.toString().should.equal(amount.toString(), "amount is correct")
-			event.balance.toString().should.equal(amount.toString(), "balance is correct")
-		})
-	})
+			const log = result.logs[0];
+			log.event.should.eq("Deposit");
+			const event = log.args;
+			event.token.should.equal(ETHER_ADDRESS, "token address is correct");
+			event.user.should.equal(user1, "user address is correct");
+			event.amount.toString().should.equal(amount.toString(), "amount is correct");
+			event.balance.toString().should.equal(amount.toString(), "balance is correct");
+		});
+	});
 
 	describe("withdrawing ether", async () => {
-		let result
-		let amount
+		let result;
+		let amount;
 
 		beforeEach(async () => {
-			amount = ether(1)
+			amount = ether(1);
 			// Deposit Ether first
-			await exchange.depositEther({ from: user1, value: amount })
-		})
+			await exchange.depositEther({ from: user1, value: amount });
+		});
 		
 		describe("success", async () => {
 			beforeEach(async () => {
 				// Withdraw Ether
-				result = await exchange.withdrawEther(amount, { from: user1 })
-			})
+				result = await exchange.withdrawEther(amount, { from: user1 });
+			});
 			it("withdraws ether funds", async () => {
-				const balance = await exchange.tokens(ETHER_ADDRESS, user1)
-				balance.toString().should.equal("0")
-			})
+				const balance = await exchange.tokens(ETHER_ADDRESS, user1);
+				balance.toString().should.equal("0");
+			});
 
 			it("emits a Withdraw event", async () => {
-				const log = result.logs[0]
-				log.event.should.eq("Withdraw")
-				const event = log.args
-				event.token.should.equal(ETHER_ADDRESS, "token address is correct")
-				event.user.should.equal(user1, "user address is correct")
-				event.amount.toString().should.equal(amount.toString(), "amount is correct")
-				event.balance.toString().should.equal("0", "balance is correct")
-			})
-		})
+				const log = result.logs[0];
+				log.event.should.eq("Withdraw");
+				const event = log.args;
+				event.token.should.equal(ETHER_ADDRESS, "token address is correct");
+				event.user.should.equal(user1, "user address is correct");
+				event.amount.toString().should.equal(amount.toString(), "amount is correct");
+				event.balance.toString().should.equal("0", "balance is correct");
+			});
+		});
 
 		describe("failure", async () => {
 			it("rejects withdraws for insufficient balances", async() => {
-				await exchange.withdrawEther(ether(100), { from: user1 }).should.be.rejectedWith(EVM_REVERT)
-			})
-		})
-		
-	})
+				await exchange.withdrawEther(ether(100), { from: user1 }).should.be.rejectedWith(EVM_REVERT);
+			});
+		});
+	});
 
 	describe("depositing tokens", () => {
-		let amount
-		let result
+		let amount;
+		let result;
 		
 		describe("success", () => {
 			beforeEach(async () => {
-				amount = tokens(10)
-				await token.approve(exchange.address, amount, { from: user1} )
-				result = await exchange.depositToken(token.address, amount, { from: user1 })
-			})
+				amount = tokens(10);
+				await token.approve(exchange.address, amount, { from: user1} );
+				result = await exchange.depositToken(token.address, amount, { from: user1 });
+			});
 
 			it("tracks the token deposit", async () => {
 				// Check the token balance
@@ -295,42 +294,42 @@ contract("Exchange", ([deployer, feeAccount, user1, user2]) => {
 		})
 
 		describe("cancelling orders", async () => {
-			let Result
+			let Result;
 
 			describe("success", async () => {
 				beforeEach(async () => {
-					result = await exchange.cancelOrder("1", { from: user1 })
-				})
+					result = await exchange.cancelOrder("1", { from: user1 });
+				});
 
 				it("updates cancelled orders", async () => {
-					const orderCancelled = await exchange.orderCancelled(1)
-					orderCancelled.should.equal(true)
-				})
+					const orderCancelled = await exchange.orderCancelled(1);
+					orderCancelled.should.equal(true);
+				});
 
 				it("emits an Cancel event", async () => {
 					const log = result.logs[0]
-					log.event.should.equal("Cancel")
+					log.event.should.eq("Cancel");
 					const event = log.args
 					event.id.toString().should.equal("1", "id is correct")
-					event.tokenGet.should.equal(token.address, "tokenGet is correct")
-					event.amountGet.toString().should.equal(ether(1).toString(), "amountGet is correct")
-					event.tokenGive.toString().should.equal(ETHER_ADDRESS, "tokenGive is correct")
-					event.amountGive.toString().should.equal(tokens(1).toString(), "amountGive is correct")
+					event.tokenGet.should.equal(token.address, "tokenGet is correct");
+					event.amountGet.toString().should.equal(ether(1).toString(), "amountGet is correct");
+					event.tokenGive.toString().should.equal(ETHER_ADDRESS, "tokenGive is correct");
+					event.amountGive.toString().should.equal(tokens(1).toString(), "amountGive is correct");
 					event.user.should.equal(user1, "user is correct")
-					assert(event.timestamp != null)
-				})
-			})
+					assert(event.timestamp != null);
+				});
+			});
 			describe("failure", async () => {
 				it("rejects invalid order ids", async () => {
-					const invalidOrderId = 99999
-					await exchange.cancelOrder(invalidOrderId, { from: user1 }).should.be.rejected
-				})
+					const invalidOrderId = 99999;
+					await exchange.cancelOrder(invalidOrderId, { from: user1 }).should.be.rejected;
+				});
 
-				it("rejects unauthorized cancelations", async () => {
+				it("rejects unauthorized cancellations", async () => {
 					// Try to cancel the order from another user
-					await exchange.cancelOrder(1, { from: user2 }).should.be.rejected
-				})
-			})
-		})
-	})
-})
+					await exchange.cancelOrder(1, { from: user2 }).should.be.rejected;
+				});
+			});
+		});
+	});
+});
