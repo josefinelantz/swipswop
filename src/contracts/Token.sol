@@ -6,87 +6,83 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 contract Token {
     using SafeMath for uint256;
 
-    // Variables
-    string public name = "DApp Token";
-    string public symbol = "DAPP";
-    uint256 public decimals = 18;
+    // Token name
+    string public name = "Camel Token";
+    // Token symbol to display in exchange
+    string public symbol = "CAMEL";
+    uint8 public decimals = 18;
+    // 1 million tokens supplied
     uint256 public totalSupply;
+    
+     /*
+    Events (indexed enables filtering of events to subscribe to)
+    */ 
+    event Approval(address indexed owner, address indexed spender, uint tokens);
+    event Transfer(address indexed from, address indexed to, uint tokens);
 
-    // Store information on account balances on the blockchain
-    // We want this to be immutable
+    /*
+    Deployer can delegate tokens to many different places
+      1. Address tokenOwner
+      2. Address spender
+      3. Amount allowed to spend on behalf of deployer
+    */
+
     mapping(address => uint256) public balanceOf;
 
-    // How many tokens the exchange has permission to spend
-    // deployer address, exhange address, amount allowed to spend
-    // Deployer could have many different places where tokens are delegated
     mapping(address => mapping(address => uint256)) public allowance;
 
-    // Events (indexed enables filtering of events to subscribe to)
-    event Transfer(address indexed from, address indexed to, uint256 value);
-    event Approval(address indexed owner, address indexed spender, uint256 value);
-
-    mapping(address => uint256) private _balances;
-
     constructor() {
-        // name = _name;
-        // symbol = _symbol;
-        // decimals = 18;
-        totalSupply = 1000000 * (10**18);
+        totalSupply = 1000000 * (10 ** decimals);
         balanceOf[msg.sender] = totalSupply;
     }
 
-    // Transfer _value amount of tokens to address _to
-    // MUST fire the Transfer event.
-    // SHOULD throw if the message caller’s account balance does not have enough tokens to spend.
-    // Transfers of 0 values MUST be treated as normal transfers and fire the Transfer event.
-    function transfer(address _to, uint256 _value)
-        public
-        returns (bool success)
-    {
-        require(balanceOf[msg.sender] >= _value);
-        _transfer(msg.sender, _to, _value);
-        return true;
+    /*
+      address receiver - recipient address Transfer 
+      uint256 numTokens - _value amount of tokens to address _to could be 0
+      success - true if operation succeeds    
+      Transfer - event emitted
+    */ 
+    function transfer(address receiver, uint256 numTokens) public returns (bool success) {
+        require(numTokens <= balanceOf[msg.sender], "Insufficient balance.");
+        
+        // Recipient address cannot be the zero address
+        require(receiver != address(0));
+        balanceOf[msg.sender] = balanceOf[msg.sender].sub(numTokens);
+        balanceOf[receiver] = balanceOf[receiver].add(numTokens);
+        emit Transfer(msg.sender, receiver, numTokens);
+        return true; 
     }
 
-    function _transfer(
-        address _from,
-        address _to,
-        uint256 _value
-    ) internal {
-        require(_to != address(0));
-        balanceOf[_from] = balanceOf[_from].sub(_value);
-        balanceOf[_to] = balanceOf[_to].add(_value);
-        emit Transfer(_from, _to, _value);
+    /* 
+      Allows a spender to withdraw from tokenOwners' account multiple times, up to the allowed amount. 
+      If this function is called again it overwrites the current allowance with the new value.
+    */
+
+    function approve(address delegate, uint256 numTokens) public returns (bool success) {
+        allowance[msg.sender][delegate] = 0;
+        allowance[msg.sender][delegate] = numTokens;
+        emit Approval(msg.sender, delegate, numTokens);
+        return true; 
     }
 
-    // The transferFrom method is used for a withdraw workflow, allowing contracts to transfer tokens on your behalf. This can be used for example to allow a contract to transfer tokens on your behalf and/or to charge fees in sub-currencies.
-    // SHOULD throw unless the _from account has deliberately authorized the sender of the message via some mechanism handled by the Approve function.
-    // Transfers of 0 values MUST be treated as normal transfers and fire the Transfer event.
+    /* 
+      Allows a contract to transfer tokens on tokenOwners' behalf and/or to charge fees in sub-currencies.
+      Transfers of 0 values MUST be treated as normal transfers and fire the Transfer event.
+    */
 
     function transferFrom(
-        address _from,
-        address _to,
-        uint256 _value
+        address owner,
+        address buyer,
+        uint256 numTokens
     ) public returns (bool success) {
-        require(_value <= balanceOf[_from]);
-        require(_value <= allowance[_from][msg.sender]);
+        require(numTokens <= balanceOf[owner]);
+        require(numTokens <= allowance[owner][msg.sender]);
 
-        allowance[_from][msg.sender] = allowance[_from][msg.sender].sub(_value);
-        _transfer(_from, _to, _value);
-        return true;
-    }
+        balanceOf[owner] = balanceOf[owner].sub(numTokens);
+        balanceOf[buyer] = balanceOf[buyer].add(numTokens);
 
-    // The Approve function Allows a _spender to withdraw from _spenders' account multiple times, up to the _value amount. If this function is called again it overwrites the current allowance with _value.
-
-    // NOTE: To prevent attack vectors like the one described here and discussed here, clients SHOULD make sure to create user interfaces in such a way that they set the allowance first to 0 before setting it to another value for the same spender. THOUGH The contract itself shouldn’t enforce it, to allow backwards compatibility with contracts deployed before
-
-    function approve(address _spender, uint256 _value)
-        public
-        returns (bool success)
-    {
-        require(_spender != address(0));
-        allowance[msg.sender][_spender] = _value;
-        emit Approval(msg.sender, _spender, _value);
-        return true;
-    }
+        allowance[owner][msg.sender] = allowance[owner][msg.sender].sub(numTokens);
+        emit Transfer(owner, buyer, numTokens);
+        return true; 
+    }  
 }

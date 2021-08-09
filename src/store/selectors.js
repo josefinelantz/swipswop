@@ -152,7 +152,7 @@ export const orderBookSelector = createSelector(
     // Sort buy orders by token price
     orders = {
       ...orders,
-      buyOrders: buyOrders.sort((a, b) => b.tokenPrice - a.tokenPrice)
+      buyOrders: buyOrders.sort((a, b) => a.tokenPrice - b.tokenPrice)
     }
     // Fetch sell orders
     const sellOrders = get(orders, "sell", []);
@@ -181,7 +181,7 @@ const decorateOrderBookOrder = (order) => {
     ...order,
     orderType,
     orderTypeClass: (orderType === "buy" ? GREEN : RED),
-    orderFillClass: orderType === "buy" ? "sell" : "buy"
+    orderFillAction: orderType === "buy" ? "sell" : "buy"
   });
 }
 
@@ -332,8 +332,8 @@ const buildGraphData = (orders) => {
 const orderCancelling = state => get(state, "exchange.orderCancelling", false)
 export const orderCancellingSelector = createSelector(orderCancelling, status => status);
 
-// const orderFilling = state => get(state, 'exchange.orderFilling', false)
-// export const orderFillingSelector = createSelector(orderFilling, status => status)
+const orderFilling = state => get(state, 'exchange.orderFilling', false)
+export const orderFillingSelector = createSelector(orderFilling, status => status)
 
 // // BALANCES
 // const balancesLoading = state => get(state, 'exchange.balancesLoading', true)
